@@ -1,7 +1,7 @@
 #! /usr/bin/env python 
 
 #=======================================#
-#  PAW-Phot v3.1 Beta
+#  PAW-Phot v1.0 Beta
 #  Written by: Paul Anthony Wilson
 #  University of Exeter
 #  paw@astro.ex.ac.uk
@@ -14,7 +14,7 @@ import numpy as np
 from operator import itemgetter
 
 import pyfits
-from pyfits import getheader				# Jobb med
+from pyfits import getheader
 
 from src import unix as u
 from src import fwhm,phot,plot,best_aperture
