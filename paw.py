@@ -60,9 +60,9 @@ while 1 :
           print "Doing all"
           for num in range(len(folders)):
             print "\nWORKING WITH: ",folders[int(num)],"\n"
-			fwhm.fwhm(datadir+'/'+folders[int(num)],folders)
+            fwhm.fwhm(datadir+'/'+folders[int(num)],folders)
 	else:
-	  	  fwhm.fwhm(datadir+'/'+folders[int(num)],folders)
+	  	  fwhm.fwhm(datadir+'/'+folders[int(num)-1],folders)
     # ============================================= #
 
 
@@ -72,27 +72,9 @@ while 1 :
         if input[5:8] == 'all':
           print "Doing all"
           for num in range(len(folders)):
-			try:
-			  if num < 9 and num+1:# not in [6]:
-				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				phot.phot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
-			  else:
-				#sys.exit()
-				if num+1 not in par.ignore_objects and num+1 > -6:
-				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  phot.phot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
-			except IndexError:
-			  print u.yellow("Trying again...")
-			  if num < 9 and num+1:# not in [6]:
-				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				phot.phot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
-			  else:
-				#sys.exit()
-				if num+1 not in par.ignore_objects and num+1 > -6:
-				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  phot.phot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
-	else:
-          phot.phot('all_data/OBJ'+num+folders[int(num)	-1][5:])
+            phot.phot(datadir+'/'+folders[int(num)],folders)
+        else:       
+          phot.phot(datadir+'/'+folders[int(num)-1],folders)
     # ============================================= #
     
 
