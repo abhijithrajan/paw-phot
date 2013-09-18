@@ -9,7 +9,7 @@
 
 import os
 from os import getcwd, chdir, path, makedirs
-import time, sys
+import sys
 import numpy as np
 from operator import itemgetter
 
@@ -17,21 +17,20 @@ import pyfits
 from pyfits import getheader
 
 from src import unix as u
+from src import param as par
 from src import fwhm,phot,plot,best_aperture
 
 # Start Program
 print '\n PAW-Phot'
-print ' Version: 3.2 Beta'
-starttime=time.ctime()
+print ' Version: 1.0 Beta'
 print ' paw@astro.ex.ac.uk'
 
 def show_commands():
   print "\n\t\t"+u.bold('PAW-Phot Commands:')+"\n"
   print "\t"+u.green('fwhm')+"\tMeasures the fwhm of selected stars in field."
-  print "\t\ti.e. "+u.green('fwhm 27.')#+" or "+u.green('fwhm all')+"."
+  print "\t\ti.e. "+u.green('fwhm 01.')#+" or "+u.green('fwhm all')+"."
   print "\t"+u.green('phot')+"\tPerforms the photometry."
   print "\t"+u.green('plot')+"\tCreates the light curves."
-  print "\t"+u.green('bestapp')+"\tFinds the optimal aperture."
   print "\t"+u.red(' q')+"\tQuit the program.\n"
 
 show_commands()
@@ -41,16 +40,16 @@ if not os.path.isfile('login.cl'):
   os.system("mkiraf -t xgterm -i -q")
   print "\n No login.cl and uparm directory found. It has now been created.\n"
 
-
 input=1
 while 1 :
     input = raw_input("paw >> ")
     num = input[5:7]
-    dir_contents = os.listdir('all_data')
+    rootdir = par.rootdir[0]
+    datadir=rootdir+'/'+par.datadir[0]
+    dir_contents = os.listdir(datadir)
     folders = [s for s in dir_contents if s.startswith("OBJ")]
     folders = sorted(folders)
-    # Python 3 users
-    # input = input(">> ")
+
     if input in ['exit','q','quit']:
         exit()
     
@@ -59,43 +58,28 @@ while 1 :
     elif 'fwhm' in input:
         if input[5:8] == 'all':
           print "Doing all"
-          dir_contents = os.listdir('all_data')
-          folders = [s for s in dir_contents if s.startswith("OBJ")]
-          folders = sorted(folders)
           for num in range(len(folders)):
 			try:
-			  if num < 9 and num+1:# not in [6]:
+			  if num < 9 and num+1:
 				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				fwhm.fwhm('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
+				fwhm.fwhm('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
 			  else:
 				#sys.exit()
-				if num+1 not in [34,38,51,56,60,63,72,77] and num+1 > -6:
+				if num+1 not in par.ignore_objects and num+1 > -6:
 				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  fwhm.fwhm('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
+				  fwhm.fwhm('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
 			except IndexError:
 			  print u.yellow("Trying again...")
-			  if num < 9 and num+1:# not in [6]:
+			  if num < 9 and num+1:
 				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				fwhm.fwhm('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
+				fwhm.fwhm('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
 			  else:
 				#sys.exit()
-				if num+1 not in [34,38,51,56,60,63,72,77] and num+1 > -6:
+				if num+1 not in par.ignore_objects and num+1 > -6:
 				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  fwhm.fwhm('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
-
-	  #print "Doing all"
-	  '''
-	  dir_contents = os.listdir('all_data')
-	  folders = [s for s in dir_contents if s.startswith("OBJ")]
-	  folders = sorted(folders)
-	  for i in range(len(folders)):
-	    print "Performing FWHM measurements for all data sets\t"+str(round(i/float(len(folders))*100,2))+"% done"
-            if not os.path.isfile('all_data/OBJ'+str(i+1)+'/data/fwhm.txt'):
-	      print "Working in: ",'all_data/OBJ'+str(i+1)
-	      fwhm.fwhm('all_data/OBJ'+str(i+1))
-	  '''
+				  fwhm.fwhm('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
 	else:
-	  	  fwhm.fwhm('all_data/OBJ'+num+folders[int(num)-1][5:])
+	  	  fwhm.fwhm(datadir+'/'+folders[int(num)],folders)
     # ============================================= #
 
 
@@ -104,9 +88,6 @@ while 1 :
     elif 'phot' in input:
         if input[5:8] == 'all':
           print "Doing all"
-          dir_contents = os.listdir('all_data')
-          folders = [s for s in dir_contents if s.startswith("OBJ")]
-          folders = sorted(folders)
           for num in range(len(folders)):
 			try:
 			  if num < 9 and num+1:# not in [6]:
@@ -114,7 +95,7 @@ while 1 :
 				phot.phot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
 			  else:
 				#sys.exit()
-				if num+1 not in [34,38,51,56,60,63,72,77] and num+1 > -6:
+				if num+1 not in par.ignore_objects and num+1 > -6:
 				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
 				  phot.phot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
 			except IndexError:
@@ -124,7 +105,7 @@ while 1 :
 				phot.phot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
 			  else:
 				#sys.exit()
-				if num+1 not in [34,38,51,56,60,63,72,77] and num+1 > -6:
+				if num+1 not in par.ignore_objects and num+1 > -6:
 				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
 				  phot.phot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
 	else:
@@ -150,7 +131,7 @@ while 1 :
 				plot.plot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
 			  else:
 				#sys.exit()
-				if num+1 not in [34,38,51,56,60,63,71,72,77] and num+1 > -45:
+				if num+1 not in par.ignore_objects and num+1 > -45:
 				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
 				  plot.plot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
 			except IndexError:
@@ -160,30 +141,11 @@ while 1 :
 				plot.plot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
 			  else:
 				#sys.exit()
-				if num+1 not in [34,38,51,56,60,63,71,72,77] and num+1 > -45:
+				if num+1 not in par.ignore_objects and num+1 > -45:
 				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
 				  plot.plot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
         else:
 	  	  plot.plot('all_data/OBJ'+num+folders[int(num)	-1][5:])
-    # ============================================= #
-    
-    
-    # BESTAPP
-    # ============================================= #
-    elif 'bestapp' in input:
-    	if input[8:11] == 'all':
-    	  #print "Doing all"
-    	  print "Not ready yet"
-    	  '''
-    	  dir_contents = os.listdir('all_data')
-          folders = [s for s in dir_contents if s.startswith("OBJ")]
-          folders = sorted(folders)
-          for i in range(len(folders)):
-            best_aperture.best_app('all_data/'+folders[i]+'/not_used','off')
-    	  '''
-    	else:
-          num = input[8:10]	# Change due to bestapp word being longer than fwhm, phot, plot
-          best_aperture.best_app('all_data/OBJ'+num+folders[int(num)	-1][5:],'on')        
     # ============================================= #
     
     elif 'help' in input:
