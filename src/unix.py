@@ -27,6 +27,11 @@ def mkdir(dirname):
    if not os.path.isdir(dirname):
       os.mkdir(dirname)
 
+def rmdir(dirname):
+   "Remove a directory if it exist"
+   if os.path.isdir(dirname):
+      shutil.rmtree(dirname)
+
 def bold(text):
    bold_code = "\033[1m"
    reset_code = "\033[0;0m"
