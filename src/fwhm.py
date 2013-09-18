@@ -1,43 +1,20 @@
-#! /usr/bin/env python 
-
-#=======================================#
-#    Written by: Paul Anthony Wilson	#
-# 	   	  paw@astro.ex.ac.uk	#
-#=======================================#
-
-from os  import chdir, path, system, listdir
 import os.path
-from pyraf import iraf
-from pylab import *
-import pyraf.iraf as iraf
-import sys
-
+import numpy as np
 import param as par
 
-def fwhm(folder):
+from pyraf import iraf
+
+def fwhm(directory,folders):
   iraf.noao(_doprint=0)
   iraf.obsutil(_doprint=0)
   iraf.unlearn("psfmeasure")
   
-  datadir=par.datadir[0]
-
-  name = folder[15:21]
+  rootdir = par.rootdir[0]
   
-  workdir = os.getcwd()
-  dir_contents = listdir(workdir+'/'+folder+'/'+datadir)
+  dir_contents = os.listdir(directory+'/data')
   ds9s = [fn for fn in dir_contents if fn.startswith('ds9') and fn.endswith('.reg')]
-  ds9 = loadtxt(workdir+'/'+folder+'/'+datadir+'/'+ds9s[0])
-  
-  
-  '''
-  coords = [fn for fn in dir_contents if fn.endswith('.ctr.1')]
-  #coords = [fn for fn in dir_contents if fn.endswith('.coords')]
-  coords = sorted(coords)
-  if not coords:
-    if not os.path.isfile(workdir+'/'+folder+'/data/ds9.reg'):
-      print "\nSelect your reference stars first. This is done by creating a ds9.reg file with star coordinates."
-      sys.exit()
-  '''    
+  ds9 = directory+'/data/'+ds9s[0]#loadtxt(directory+'/data/'+ds9s[0])
+
   print "\nMeasuring the fwhm of selected reference stars..."
   iraf.noao.obsutil.psfmeasure.coords = "mark1"
   iraf.noao.obsutil.psfmeasure.display = "no"
@@ -47,23 +24,22 @@ def fwhm(folder):
   iraf.noao.obsutil.psfmeasure.swidth = "15"
   iraf.noao.obsutil.psfmeasure.iterati = "1"
   iraf.noao.obsutil.psfmeasure.imagecu = ds9
-  iraf.noao.obsutil.psfmeasure.graphcur = "src/q.reg"
-  iraf.noao.obsutil.psfmeasure.logfile = "fwhm.log"
+  iraf.noao.obsutil.psfmeasure.graphcur = rootdir+"/src/q.reg"
+  iraf.noao.obsutil.psfmeasure.logfile = directory+"/data/fwhm.log"
 
-  if os.path.isfile('fwhm.log'):
-    os.system('rm fwhm.log')
+  if os.path.isfile(directory+"/data/fwhm.log"):
+    os.system("rm "+directory+"/data/fwhm.log")
     
-  imgs = [fn for fn in dir_contents if fn.startswith('ali') and fn.endswith('.fits')]
+  imgs = [fn for fn in dir_contents if fn.startswith(par.image_name[0]) and fn.endswith(par.image_name[1])]
   imgs = sorted(imgs)
- 
 
   for i in range(len(imgs)):
-    iraf.noao.obsutil.psfmeasure.imagecu = workdir+'/'+folder+'/'+datadir+'/'+ds9s[0]
-    iraf.noao.obsutil.psfmeasure(workdir+'/'+folder+'/'+datadir+'/'+imgs[i])
+    iraf.noao.obsutil.psfmeasure.imagecu = ds9
+    iraf.noao.obsutil.psfmeasure(directory+'/data/'+imgs[i])
   
   N_stars = len(ds9)
   fwhm = [[] for _ in range(len(imgs))]
-  values = [ line for line in open('fwhm.log') if '.' in line and 'NOAO' not in line]
+  values = [ line for line in open(directory+"/data/fwhm.log") if '.' in line and 'NOAO' not in line]
   j = 0
   for i in range(len(values)):
     if values[i][2:9] == 'Average':
@@ -71,19 +47,8 @@ def fwhm(folder):
     if values[i][2:9] != 'Average': 
       fwhm[j].append(float(values[i][41:47]))
 
-  if datadir=="data_binned":
-    f = open('fwhm_binned.txt', 'w+')
-  else:
-    f = open('fwhm.txt', 'w+')
+  f = open(directory+'/data/fwhm.txt', 'w+')
   for i in range(len(imgs)):
-    fwhm[i] = array(fwhm[i])
+    fwhm[i] = np.array(fwhm[i])
     print >> f, np.median(fwhm[i]), imgs[i]
   f.close()
-
-  
-  if datadir=="data_binned":
-    os.system('mv fwhm_binned.txt '+folder+'/'+datadir)
-    os.system('mv fwhm.log '+folder+'/'+datadir)
-  else:
-    os.system('mv fwhm.txt '+folder+'/'+datadir)
-    os.system('mv fwhm.log '+folder+'/'+datadir)
