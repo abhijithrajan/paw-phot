@@ -59,25 +59,8 @@ while 1 :
         if input[5:8] == 'all':
           print "Doing all"
           for num in range(len(folders)):
-			try:
-			  if num < 9 and num+1:
-				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				fwhm.fwhm('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
-			  else:
-				#sys.exit()
-				if num+1 not in par.ignore_objects and num+1 > -6:
-				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  fwhm.fwhm('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
-			except IndexError:
-			  print u.yellow("Trying again...")
-			  if num < 9 and num+1:
-				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				fwhm.fwhm('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
-			  else:
-				#sys.exit()
-				if num+1 not in par.ignore_objects and num+1 > -6:
-				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  fwhm.fwhm('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:],dir_contents)
+            print "\nWORKING WITH: ",folders[int(num)],"\n"
+			fwhm.fwhm(datadir+'/'+folders[int(num)],folders)
 	else:
 	  	  fwhm.fwhm(datadir+'/'+folders[int(num)],folders)
     # ============================================= #
