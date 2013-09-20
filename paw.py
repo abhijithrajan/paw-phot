@@ -18,7 +18,7 @@ from pyfits import getheader
 
 from src import unix as u
 from src import param as par
-from src import fwhm,phot,plot,best_aperture
+from src import fwhm,phot,plot
 
 # Start Program
 print '\n PAW-Phot'
