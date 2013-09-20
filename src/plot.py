@@ -338,5 +338,5 @@ def plot(directory):
 
 	  #bc.bin_calc(folder,N_ref_stars,JD,flux_T,err_T_MAG,flux_target_norm,T_LC,REF_LC,REF_LCs,fwhm,airmass,err_target_w_mean_norm,err_ref_Rs,MAD_factor,ref_number,iteration)
 	  
-	  c.calc(directory[18:],N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,JD,T_LC,err_target_w_mean_norm,norm_ref_star_flux_weight_sum_mean,REF_LCs,err_r_norm_sum,err_ref_Rs,master_ref,iteration,N_orig_stars,ds9_file)
+	  c.calc(directory[-5:],N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,JD,T_LC,err_target_w_mean_norm,norm_ref_star_flux_weight_sum_mean,REF_LCs,err_r_norm_sum,err_ref_Rs,master_ref,iteration,N_orig_stars,ds9_file)
 	  iteration += 1
