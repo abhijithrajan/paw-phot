@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 pixel_scale = 		[0.288]
-rootdir = 			["/data1/paw/bd/T-Y/binned"] # i.e "/home/user/data" Basically the path where the paw.py file is.
+rootdir = 			["/data/bd/T-Y"] # i.e "/home/user/data" Basically the path where the paw.py file is.
 datadir = 			["data"]
 image_name = 		["binned",".fits"]		# First and last parts of the .fits files.
 variable_aperture = ["yes"]

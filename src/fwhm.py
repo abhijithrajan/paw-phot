@@ -13,7 +13,7 @@ def fwhm(directory,folders):
   
   dir_contents = os.listdir(directory+'/data')
   ds9s = [fn for fn in dir_contents if fn.startswith('ds9') and fn.endswith('.reg')]
-  ds9 = directory+'/data/'+ds9s[0]#loadtxt(directory+'/data/'+ds9s[0])
+  ds9 = directory+'/data/'+ds9s[0]
 
   print "\nMeasuring the fwhm of selected reference stars..."
   iraf.noao.obsutil.psfmeasure.coords = "mark1"

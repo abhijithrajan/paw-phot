@@ -145,7 +145,7 @@ def phot(directory,folders):
 			 mag_dir = newdir+"/mag"
 			 params = newdir+"/params"
 			 
-			 u.mkdir(mag_dir )
+			 u.mkdir(mag_dir)
 			 u.mkdir(params)    
 			 	
 			 # Set outer photpars
@@ -198,19 +198,21 @@ def phot(directory,folders):
 			   
 			   print '___________________________________________________________________\n'      
 			   # Dumping data from the .mag.1 files into text files
+			 
+
 			 iraf.daophot.pdump(	# Getting the position and flux of stars
 
 			 ####	OBJ parameters	     ####
 							   #
-			 directory+"*.mag.1",			#
-			 fields="XCEN,YCEN,FLUX,MAG,MERR,MSKY,XCENTER,YCENTER",#
+			 mag_dir+"/*.mag.1",			#
+			 fields="XCEN,YCEN,FLUX,MAG,MERR,MSKY",#
 			 expr="yes",			#
-			 headers="no",			#
-			 Stdout=directory+'/data/xyf.list')		#
+			 headers="yes",			#
+			 Stdout=newdir+'/xyf.list')		#
 							   #
 			 #################################
 
-			 os.system( 'mv '+directory+'/data/xyf.list'+' '+newdir  )
+			 #os.system( 'mv '+directory+'/data/xyf.list'+' '+newdir  )
 			 os.system( 'mv *par* ' +params  )
             
   print "Photometry done\n"

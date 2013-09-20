@@ -11,7 +11,7 @@ import param as par
 import datetime
 import os
 
-def plot_them(iteration,JD,T_LC,err_target_w_mean_norm,REF_LCs,master_ref,err_r_norm_sum,airmass,np_airmass,poly2d_AIRMASS,N_ref_stars,err_ref_Rs,robust,folder,fwhm):
+def plot_them(iteration,obj_name,JD,T_LC,err_target_w_mean_norm,REF_LCs,master_ref,err_r_norm_sum,airmass,np_airmass,poly2d_AIRMASS,N_ref_stars,err_ref_Rs,robust,fwhm):
  
   rainbow_colors = iter(cm.rainbow(np.linspace(0, 1, N_ref_stars)))
   
@@ -76,14 +76,14 @@ def plot_them(iteration,JD,T_LC,err_target_w_mean_norm,REF_LCs,master_ref,err_r_
     aperture = "constant"
   minorticks_on()
   if robust > 1.0 and iteration > 0:
-    plt.savefig('plots/V_binned/'+'V_'+str(iteration)+'_'+folder[33:39]+'_'+aperture+'_aperture.pdf')
+    plt.savefig('plots/'+'V_'+str(iteration)+'_'+obj_name+'_'+aperture+'_aperture.pdf')
   else:
-    plt.savefig('plots/V_binned/'+str(iteration)+'_'+folder[33:39]+'_'+aperture+'_aperture.pdf')
+    plt.savefig('plots/'+str(iteration)+'_'+obj_name+'_'+aperture+'_aperture.pdf')
   plt.draw()
   if (iteration == 0):
     clf()
 
-def calc(folder,N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,JD,T_LC,err_target_w_mean_norm,norm_ref_star_flux_weight_sum_mean,REF_LCs,err_r_norm_sum,err_ref_Rs,master_ref,iteration,N_orig_stars,ds9):
+def calc(obj_name,N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,JD,T_LC,err_target_w_mean_norm,norm_ref_star_flux_weight_sum_mean,REF_LCs,err_r_norm_sum,err_ref_Rs,master_ref,iteration,N_orig_stars,ds9_file):
   
   MAD_factor = par.cut_offs[1]
   MAD_cutoff = []
@@ -132,10 +132,11 @@ def calc(folder,N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,JD
     for i in range(len(REF_LCs)):
       #print "\t",round(st.chi2(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.robust(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.MAD(REF_LCs[i]),5)
 
-      if ((st.MAD(REF_LCs[i]) > MAD_median+MAD_factor*MAD_STD) or (st.chi2(REF_LCs[i],err_ref_Rs[i]) > 50.) or (ds9[i+1][4]>par.cut_offs[5]) or (ds9[i][4] < par.cut_offs[4])):
-        print "\t",round(st.chi2(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.robust(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.MAD(REF_LCs[i]),5),"\t",ds9[i+1][4],u.red('  Ref: '+str(i))
+
+      if ((st.MAD(REF_LCs[i]) > MAD_median+MAD_factor*MAD_STD) or (st.chi2(REF_LCs[i],err_ref_Rs[i]) > 50.) or (ds9_file[4][i+1]>par.cut_offs[5]) or (ds9_file[4][i] < par.cut_offs[4])):
+        print "\t",round(st.chi2(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.robust(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.MAD(REF_LCs[i]),5),"\t",ds9_file[4][i+1],u.red('  Ref: '+str(i))
       else:
-        print "\t",round(st.chi2(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.robust(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.MAD(REF_LCs[i]),5),"\t",ds9[i+1][4]   
+        print "\t",round(st.chi2(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.robust(REF_LCs[i],err_ref_Rs[i]),2),'\t\t',round(st.MAD(REF_LCs[i]),5),"\t",ds9_file[4][i+1]   
 
     f = file("temp.txt", "w+")    
     for i in range(len(REF_LCs)):
@@ -155,10 +156,10 @@ def calc(folder,N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,JD
 
 
     f = open('data.txt', 'a+')
-    print >> f, folder[33:],'\t',round(chi2_red,2),'\t',round(chi2_master_ref,2),'\t',round(robust,2),'\t',round(T_LC.std(),6),'\t',round(mean_ref_std,6),'\t',round(master_ref.std(),6),'\t',str(N_orig_stars),'\t',str(N_bad_refs),'\t',str(N_ref_stars),'\t',DOF,'\t',round(amplitude,2),'\t',round(amplitude_err,2),'\t',chance_variable,'\t',variable
+    print >> f, obj_name,'\t',round(chi2_red,2),'\t',round(chi2_master_ref,2),'\t',round(robust,2),'\t',round(T_LC.std(),6),'\t',round(mean_ref_std,6),'\t',round(master_ref.std(),6),'\t',str(N_orig_stars),'\t',str(N_bad_refs),'\t',str(N_ref_stars),'\t',DOF,'\t',round(amplitude,2),'\t',round(amplitude_err,2),'\t',chance_variable,'\t',variable
     f.close()
     
-    f = open('../plots/L-T_Plots/LCs/data/'+folder[33:]+'.txt', 'w+')
+    f = open('plots/T-Y_Plots/LCs/data/W0458.txt', 'w+')
     for i in range(len(T_LC)):
       print >> f, JD[i],T_LC[i],err_target_w_mean_norm[i],master_ref[i],err_r_norm_sum[i]
     
@@ -168,9 +169,11 @@ def calc(folder,N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,JD
     #phot_qual = []
     #for i in range(len(T_LC)):
     #  phot_qual.append(np.median(err_target_w_mean_norm[i]))
-    f = open('../plots/L-T_Plots/Histogram_phot/data/phot_qual_binned.txt', 'a+')
-    print >> f, np.median(err_target_w_mean_norm)  
-    f.close()
+    
+    #f = open('../plots/L-T_Plots/Histogram_phot/data/phot_qual_binned.txt', 'a+')
+    #print >> f, np.median(err_target_w_mean_norm)  
+    #f.close()
   
-  #plot_them(iteration,JD,T_LC,err_target_w_mean_norm,REF_LCs,master_ref,err_r_norm_sum,airmass,np_airmass,poly2d_AIRMASS,N_ref_stars,err_ref_Rs,robust,folder,fwhm)
+  #obj_name,JD,T_LC,err_target_w_mean_norm,REF_LCs,master_ref,err_r_norm_sum,airmass,np_airmass,poly2d_AIRMASS,N_ref_stars,err_ref_Rs,robust,fwhm
+  plot_them(iteration,obj_name,JD,T_LC,err_target_w_mean_norm,REF_LCs,master_ref,err_r_norm_sum,airmass,np_airmass,poly2d_AIRMASS,N_ref_stars,err_ref_Rs,robust,fwhm)
 
