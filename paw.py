@@ -92,25 +92,25 @@ while 1 :
           for num in range(len(folders)):
 			try:
 			  if num < 9 and num+1:# not in [6]:
-				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				plot.plot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
+				print "\nWORKING WITH: ",datadir+'/'+folders[int(num)-1],folders,"\n"
+				plot.plot(datadir+'/'+folders[int(num)-1],folders)
 			  else:
 				#sys.exit()
 				if num+1 not in par.ignore_objects and num+1 > -45:
-				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  plot.plot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
+				  print "\nWORKING WITH: ",datadir+'/'+folders[int(num)-1],folders,"\n"
+				  plot.plot(datadir+'/'+folders[int(num)-1],folders)
 			except IndexError:
 			  print u.yellow("Trying again...(IndexError)")
 			  if num < 9 and num+1:# not in [6]:
-				print "\nWORKING WITH: ",'all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:],"\n"
-				plot.plot('all_data/OBJ0'+str(num+1)+folders[int(num+1)	-1][5:])
+				print "\nWORKING WITH: ",datadir+'/'+folders[int(num)-1],folders,"\n"
+				plot.plot(datadir+'/'+folders[int(num)-1],folders)
 			  else:
 				#sys.exit()
 				if num+1 not in par.ignore_objects and num+1 > -45:
-				  print "\nWORKING WITH: ",'all_data/OBJ'+str(num+1)+folders[int(num)][5:],"\n"
-				  plot.plot('all_data/OBJ'+str(num+1)+folders[int(num+1)	-1][5:])
+				  print "\nWORKING WITH: ",datadir+'/'+folders[int(num)-1],folders,"\n"
+				  plot.plot(datadir+'/'+folders[int(num)-1],folders)
         else:
-	  	  plot.plot('all_data/OBJ'+num+folders[int(num)	-1][5:])
+	  	  plot.plot(datadir+'/'+folders[int(num)-1])
     # ============================================= #
     
     elif 'help' in input:
