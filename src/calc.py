@@ -159,7 +159,7 @@ def calc(obj_name,N_ref_stars,N_bad_refs,airmass,np_airmass,poly2d_AIRMASS,fwhm,
     print >> f, obj_name,'\t',round(chi2_red,2),'\t',round(chi2_master_ref,2),'\t',round(robust,2),'\t',round(T_LC.std(),6),'\t',round(mean_ref_std,6),'\t',round(master_ref.std(),6),'\t',str(N_orig_stars),'\t',str(N_bad_refs),'\t',str(N_ref_stars),'\t',DOF,'\t',round(amplitude,2),'\t',round(amplitude_err,2),'\t',chance_variable,'\t',variable
     f.close()
     
-    f = open('plots/T-Y_Plots/LCs/data/W0458.txt', 'w+')
+    f = open('plots/data/'+obj_name+'.txt', 'w+')
     for i in range(len(T_LC)):
       print >> f, JD[i],T_LC[i],err_target_w_mean_norm[i],master_ref[i],err_r_norm_sum[i]
     
