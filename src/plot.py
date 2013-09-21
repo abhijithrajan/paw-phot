@@ -36,9 +36,14 @@ def get_airmass_JD(directory):
   JD = []
   for i in range(len(imgs)):
     headers.append(pyfits.open(directory+'/data/'+imgs[i]))
-    JD.append(headers[i][0].header['MJD'])
+    JD.append(headers[i][0].header['MJD-COMB'])
     airmass.append(headers[i][0].header['AIRMASS'])
   return airmass, JD
+
+def convert(x):
+	if 'INDEF' in x.strip(): x = -9999
+	else: x = float(x.strip())
+	return (x)
 
 def plot(directory):
 
@@ -48,7 +53,6 @@ def plot(directory):
 	ds9_file = loadtxt(ds9, unpack='true')
 
 	''' Defining the number of reference stars '''
-	
 	fwhm = np.loadtxt(directory+'/data/fwhm.txt',usecols=(0,))
 	N_ref_stars = len(ds9_file[0])-1
 
@@ -79,7 +83,7 @@ def plot(directory):
 	else:
 	  folders = [s for s in dir_contents if s.startswith("A")]
 	
-	T = loadtxt(directory+'/'+folders[0]+'/xyf.list')
+	T = loadtxt(directory+'/'+folders[0]+'/xyf.list',converters={3: convert, 4:convert})
 
 	''' Convert JD days --> hours '''
 	JD_1 = JD.min()
@@ -97,7 +101,7 @@ def plot(directory):
 	variance_norm = [[] for _ in range(N_ref_stars)]
 
 	''' Obtaining the photometry data '''
-	x, y, flux, mag, merr, msky = loadtxt(directory+'/'+folders[0]+'/xyf.list', unpack=True)
+	x, y, flux, mag, merr, msky = loadtxt(directory+'/'+folders[0]+'/xyf.list', unpack=True,converters={3: convert, 4:convert})
 	x_target = x[::N_ref_stars+1]
 	y_target = y[::N_ref_stars+1]
 
